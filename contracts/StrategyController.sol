@@ -3,29 +3,18 @@ pragma solidity ^0.8.24;
 
 import '@openzeppelin/contracts/access/AccessControl.sol';
 import '@openzeppelin/contracts/token/ERC20/ERC20.sol';
-import './Membership.sol';
-
-struct MemberInfo {
-	uint256 id;
-	address depositEth;
-	string depositBtc;
-}
 
 contract ReplicatedStrategyController is AccessControl {
 	bytes32 public constant ADMIN_ROLE = keccak256('ADMIN_ROLE');
 	bytes32 public constant EXECUTOR_ROLE = keccak256('EXECUTOR_ROLE');
-	bytes32 public constant MEMBER_ROLE = keccak256('MEMBER_ROLE');
-
-	mapping(address member => MemberInfo) public info;
-	mapping(address token => bool) public isDepositToken;
 
 	// ---------------------------------------------------------------------------------------
-	modifier onlyExecutors() {
-		require(hasRole(EXECUTOR_ROLE, msg.sender) == true, 'No Executor');
+	modifier onlyAdmins() {
+		require(hasRole(ADMIN_ROLE, msg.sender) == true, 'No Admin');
 		_;
 	}
-	modifier onlyMembers() {
-		require(hasRole(MEMBER_ROLE, msg.sender) == true, 'No Member');
+	modifier onlyExecutors() {
+		require(hasRole(EXECUTOR_ROLE, msg.sender) == true, 'No Executor');
 		_;
 	}
 

@@ -35,7 +35,7 @@ Add the correct openzepplin solidity version, otherwise it won't compile.
 
 > yarn add @openzeppelin/contracts@3.4.2
 
-```
+```js
 // Importent
 pragma solidity =0.7.6;
 pragma abicoder v2;
@@ -52,7 +52,7 @@ Implements:
 
 ### IERC721Receiver
 
-```
+```js
 INonfungiblePositionManager public immutable nonfungiblePositionManager;
 
 // Represents the deposit of an NFT
@@ -71,7 +71,7 @@ mapping(uint256 => Deposit) public deposits;
 
 ### AccessControl
 
-```
+```js
 bytes32 public constant ADMIN_ROLE = keccak256('ADMIN_ROLE');
 bytes32 public constant EXECUTOR_ROLE = keccak256('EXECUTOR_ROLE');
 
@@ -90,22 +90,30 @@ modifier onlyAdminsOrExecutors() {
 
 ## AccessControl Functions
 
-```
-"function ADMIN_ROLE() view returns (bytes32)",
-"function DEFAULT_ADMIN_ROLE() view returns (bytes32)",
-"function EXECUTOR_ROLE() view returns (bytes32)",
-"function getRoleAdmin(bytes32) view returns (bytes32)",
-"function getRoleMember(bytes32,uint256) view returns (address)",
-"function getRoleMemberCount(bytes32) view returns (uint256)",
-"function grantRole(bytes32,address)",
-"function hasRole(bytes32,address) view returns (bool)",
-"function renounceRole(bytes32,address)",
-"function revokeRole(bytes32,address)",
+```js
+// roles
+function DEFAULT_ADMIN_ROLE() view returns (bytes32),
+function ADMIN_ROLE() view returns (bytes32),
+function EXECUTOR_ROLE() view returns (bytes32),
+
+// visibility
+function getRoleAdmin(bytes32) view returns (bytes32),
+function getRoleMember(bytes32,uint256) view returns (address),
+function getRoleMemberCount(bytes32) view returns (uint256),
+
+// check verify function
+function hasRole(bytes32,address) view returns (bool),
+
+// give admin control over access
+function grantRole(bytes32,address),
+function revokeRole(bytes32,address),
+function renounceRole(bytes32,address),
 ```
 
 ## Redeem safety function [admin]
 
 ```js
+// give admin the ability to redeem any kind of ownership
 function redeemOwnership(address toTransfer, address to) external onlyAdmins {}
 function redeemToken(address token, address to, uint256 value) external onlyAdmins {}
 function redeemNFT(uint256 tokenId, address to) external onlyAdmins {}
@@ -149,8 +157,10 @@ function mintNewPosition(
 ## Control [admin/executor]
 
 ```js
+// give admin/executor the ability to collect fees towards the LiquidityController
 function collectFees(uint256 tokenId) external onlyAdminsOrExecutors returns (uint256 amount0, uint256 amount1) {}
 
+// give admin/executor the ability to increase the liquidity for a given tokenId (NFT)
 function increaseLiquidity(
     uint256 tokenId,
     uint256 amountAdd0,
@@ -159,6 +169,7 @@ function increaseLiquidity(
     uint256 amount1Min
 ) external onlyAdminsOrExecutors returns (uint128 liquidity, uint256 amount0, uint256 amount1) {}
 
+// give admin/executor the ability to decrease the liquidity for a given tokenId (NFT)
 function decreaseLiquidity(
     uint256 tokenId,
     uint128 liquidity,

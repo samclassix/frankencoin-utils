@@ -107,6 +107,8 @@ function hasRole(bytes32,address) view returns (bool),
 // give admin control over access
 function grantRole(bytes32,address),
 function revokeRole(bytes32,address),
+
+// give all control to renounce access
 function renounceRole(bytes32,address),
 ```
 
@@ -157,8 +159,11 @@ function mintNewPosition(
 ## Control [admin/executor]
 
 ```js
-// give admin/executor the ability to collect fees towards the LiquidityController
-function collectFees(uint256 tokenId) external onlyAdminsOrExecutors returns (uint256 amount0, uint256 amount1) {}
+// give admin/executor the ability to collect fees. admins are allowed to withdraw.
+function collectFees(
+		uint256 tokenId,
+		bool withdraw
+	) external onlyAdminsOrExecutors returns (uint256 amount0, uint256 amount1) {}
 
 // give admin/executor the ability to increase the liquidity for a given tokenId (NFT)
 function increaseLiquidity(

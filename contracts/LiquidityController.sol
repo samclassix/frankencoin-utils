@@ -166,11 +166,19 @@ contract LiquidityController is IERC721Receiver, AccessControl {
 	}
 
 	// ---------------------------------------------------------------------------------------
-	function collectFees(uint256 tokenId) external onlyAdminsOrExecutors returns (uint256 amount0, uint256 amount1) {
+	function collectFees(
+		uint256 tokenId,
+		bool withdraw
+	) external onlyAdminsOrExecutors returns (uint256 amount0, uint256 amount1) {
+		if (withdraw == true) {
+			// check if you have the rights to withdraw
+			require(hasRole(ADMIN_ROLE, msg.sender) == true, 'Not Admin');
+		}
+
 		// set amount0Max and amount1Max to uint256.max to collect all fees
 		INonfungiblePositionManager.CollectParams memory params = INonfungiblePositionManager.CollectParams({
 			tokenId: tokenId,
-			recipient: address(this), // always to contract
+			recipient: withdraw ? msg.sender : address(this), // give admin the write to withdraw, otherwise this
 			amount0Max: type(uint128).max,
 			amount1Max: type(uint128).max
 		});

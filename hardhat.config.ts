@@ -11,7 +11,15 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const config: HardhatUserConfig = {
-	solidity: '0.7.6',
+	solidity: {
+		version: '0.7.6',
+		settings: {
+			optimizer: {
+				enabled: true,
+				runs: 200,
+			},
+		},
+	},
 	namedAccounts: {
 		deployer: {
 			default: 0,

@@ -29,5 +29,6 @@
     "function revokeRole(bytes32,address)",
     "function setAllowanceForManager(address,address,uint256,uint256)",
     "function setAllowanceTo(address,address,uint256)",
-    "function transferForDeposit(uint256,uint256,uint256)"
+    "function transferForDeposit(uint256,uint256,uint256)",
+    "function transferForTokens(address,address,uint256,uint256)"
 ]

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.24;
+pragma solidity =0.7.6;
 
 import '@openzeppelin/contracts/access/AccessControl.sol';
 
@@ -12,9 +12,9 @@ contract Membership is AccessControl {
 		_setRoleAdmin(ADMIN_ROLE, ADMIN_ROLE);
 		_setRoleAdmin(EXECUTOR_ROLE, ADMIN_ROLE);
 
-		_grantRole(ADMIN_ROLE, admin);
+		_setupRole(ADMIN_ROLE, admin);
 
-		_grantRole(EXECUTOR_ROLE, admin);
-		_grantRole(EXECUTOR_ROLE, executor);
+		_setupRole(EXECUTOR_ROLE, admin);
+		_setupRole(EXECUTOR_ROLE, executor);
 	}
 }

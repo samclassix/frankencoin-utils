@@ -41,14 +41,14 @@
 		"hardhat-gas-reporter": "^1.0.9",
 		"mocha": "^10.7.0",
 		"solidity-coverage": "^0.8.4",
-		"viem": "^2.17.8",
-		"tsc-watch": "^6.2.0"
+		"tsc-watch": "^6.2.0",
+		"viem": "^2.17.8"
 	},
 	"dependencies": {
-		"@openzeppelin/contracts": "^5.0.2",
+		"@openzeppelin/contracts": "3.4.2",
+		"@typechain/ethers-v6": "^0.5.0",
 		"@uniswap/v3-core": "^1.0.1",
 		"@uniswap/v3-periphery": "^1.4.4",
-		"@typechain/ethers-v6": "^0.5.0",
 		"hardhat": "^2.22.10",
 		"hardhat-abi-exporter": "^2.10.0",
 		"hardhat-contract-sizer": "^2.5.1",

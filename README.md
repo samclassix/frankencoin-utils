@@ -57,7 +57,6 @@ INonfungiblePositionManager public immutable nonfungiblePositionManager;
 
 // Represents the deposit of an NFT
 struct Deposit {
-    address owner;
     address token0;
     address token1;
     uint24 fee;
@@ -69,23 +68,24 @@ struct Deposit {
 mapping(uint256 => Deposit) public deposits;
 ```
 
+### NFT Received (Deposit)
+
+```js
+// allows to handle ERC721 aka NFTs, by calling _createDeposit
+function onERC721Received(address, address, uint256 tokenId, bytes calldata) external override returns (bytes4) {}
+
+// create a reference to be aware of new minted or received NFTs
+function _createDeposit(uint256 tokenId) internal {}
+```
+
 ### AccessControl
 
 ```js
 bytes32 public constant ADMIN_ROLE = keccak256('ADMIN_ROLE');
 bytes32 public constant EXECUTOR_ROLE = keccak256('EXECUTOR_ROLE');
 
-modifier onlyAdmins() {
-    require(hasRole(ADMIN_ROLE, msg.sender) == true, 'No Admin');
-    _;
-}
-modifier onlyAdminsOrExecutors() {
-    require(
-        hasRole(ADMIN_ROLE, msg.sender) == true || hasRole(EXECUTOR_ROLE, msg.sender) == true,
-        'No AdminOrExecutor'
-    );
-    _;
-}
+modifier onlyAdmins() {}
+modifier onlyAdminsOrExecutors() {}
 ```
 
 ## AccessControl Functions
@@ -133,14 +133,14 @@ function setAllowanceForManager(
 // allow admins to set any allowance (approve proxy)
 function setAllowanceTo(address token, address to, uint256 amount) external onlyAdmins {}
 
-// allow admins to transfer to a tokenId deposit
+// allow admins to transfer for a tokenId deposit
 function transferForDeposit(uint256 tokenId, uint256 amount0, uint256 amount1) external onlyAdmins {}
 ```
 
 ## Mint [admin]
 
 ```js
-// allow admins to create new positions (deposits)
+// allow admins to create new positions (deposits). This will call _createDeposit
 function mintNewPosition(
     address token0,
     address token1,

@@ -137,6 +137,7 @@ function setAllowanceTo(address token, address to, uint256 amount) external only
 
 // allow admins to transfer for a tokenId deposit
 function transferForDeposit(uint256 tokenId, uint256 amount0, uint256 amount1) external onlyAdmins {}
+function transferForTokens(address token0, address token1, uint256 amount0, uint256 amount1) public onlyAdmins {}
 ```
 
 ## Mint [admin]
@@ -182,3 +183,16 @@ function decreaseLiquidity(
     uint256 amount1Min
 ) external onlyAdminsOrExecutors returns (uint256 amount0, uint256 amount1) {}
 ```
+
+# Possible Usage
+
+1. Deploy this SC with constructor params.
+2. Approve transfers / set allowance
+    - token0 -> `ERC20.approve(...)` -> SC
+    - token1 -> `ERC20.approve(...)` -> SC
+    - `SC:setAllowanceForManager(token0, token1, 1 << 255, 1 << 255);`
+    - e.g. for "infinity" approvement
+3. `SC:transferForTokens(token0, token1, amount0, amount1);`
+4. `SC:mintNewPosition(token0, token1, fee, ...);`
+5. `SC:collectFees(tokenId, true); // claim as admin`
+6. or collect fees to contract for further use with `false`

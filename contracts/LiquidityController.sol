@@ -107,8 +107,12 @@ contract LiquidityController is IERC721Receiver, AccessControl {
 	// ---------------------------------------------------------------------------------------
 	// transfer helfer from msg.sender for a specific deposit type, -> needs allowance
 	function transferForDeposit(uint256 tokenId, uint256 amount0, uint256 amount1) external onlyAdmins {
-		TransferHelper.safeTransferFrom(deposits[tokenId].token0, msg.sender, address(this), amount0);
-		TransferHelper.safeTransferFrom(deposits[tokenId].token1, msg.sender, address(this), amount1);
+		transferForTokens(deposits[tokenId].token0, deposits[tokenId].token1, amount0, amount1);
+	}
+
+	function transferForTokens(address token0, address token1, uint256 amount0, uint256 amount1) public onlyAdmins {
+		TransferHelper.safeTransferFrom(token0, msg.sender, address(this), amount0);
+		TransferHelper.safeTransferFrom(token1, msg.sender, address(this), amount1);
 	}
 
 	// ---------------------------------------------------------------------------------------

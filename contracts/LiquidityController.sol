@@ -16,7 +16,6 @@ contract LiquidityController is IERC721Receiver, AccessControl {
 
 	// Represents the deposit of an NFT
 	struct Deposit {
-		address owner;
 		address token0;
 		address token1;
 		uint24 fee;
@@ -35,13 +34,13 @@ contract LiquidityController is IERC721Receiver, AccessControl {
 
 	// ---------------------------------------------------------------------------------------
 	modifier onlyAdmins() {
-		require(hasRole(ADMIN_ROLE, msg.sender) == true, 'No Admin');
+		require(hasRole(ADMIN_ROLE, msg.sender) == true, 'Not Admin');
 		_;
 	}
 	modifier onlyAdminsOrExecutors() {
 		require(
 			hasRole(ADMIN_ROLE, msg.sender) == true || hasRole(EXECUTOR_ROLE, msg.sender) == true,
-			'No AdminOrExecutor'
+			'Not AdminOrExecutor'
 		);
 		_;
 	}
@@ -67,7 +66,7 @@ contract LiquidityController is IERC721Receiver, AccessControl {
 	function _createDeposit(uint256 tokenId) internal {
 		(
 			,
-			,
+			address operator,
 			address token0,
 			address token1,
 			uint24 fee,
@@ -79,8 +78,8 @@ contract LiquidityController is IERC721Receiver, AccessControl {
 			,
 
 		) = nonfungiblePositionManager.positions(tokenId);
+		require(operator == address(this), 'Not Owned');
 		deposits[tokenId] = Deposit({
-			owner: address(this),
 			token0: token0,
 			token1: token1,
 			fee: fee,

@@ -327,11 +327,6 @@
         "outputs": [
             {
                 "internalType": "address",
-                "name": "owner",
-                "type": "address"
-            },
-            {
-                "internalType": "address",
                 "name": "token0",
                 "type": "address"
             },

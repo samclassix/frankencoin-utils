@@ -30,7 +30,7 @@ contract LiquidityController is IERC721Receiver, AccessControl {
 
 	// ---------------------------------------------------------------------------------------
 	event NewDeposit(uint256 tokenId, address token0, address token1, uint24 fee);
-	event CollectedFees(uint256 tokenId, uint256 amount0, uint256 amount1);
+	event CollectedFees(uint256 tokenId, uint256 amount0, uint256 amount1, bool withdrawal);
 	event LiquidityIncreased(uint256 tokenId, uint256 amount0, uint256 amount1, uint256 liquidity);
 	event LiquidityDecreased(uint256 tokenId, uint256 amount0, uint256 amount1, uint256 liquidity);
 	event TokenSwap(address tokenIn, address tokenOut, uint256 amountIn, uint256 amountOut);
@@ -142,9 +142,6 @@ contract LiquidityController is IERC721Receiver, AccessControl {
 	}
 
 	// ---------------------------------------------------------------------------------------
-	// @zchf=0xB58E61C3098d85632Df34EecfB899A1Ed80921cB
-	// @usdt=0xdAC17F958D2ee523a2206206994597C13D831ec7
-	// fee=3000
 	function mintNewPosition(
 		address token0,
 		address token1,
@@ -197,7 +194,7 @@ contract LiquidityController is IERC721Receiver, AccessControl {
 		});
 
 		(amount0, amount1) = nonfungiblePositionManager.collect(params);
-		emit CollectedFees(tokenId, amount0, amount1);
+		emit CollectedFees(tokenId, amount0, amount1, withdraw);
 	}
 
 	// ---------------------------------------------------------------------------------------

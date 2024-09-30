@@ -1,0 +1,998 @@
+export const LiquidityController = [
+	{
+		inputs: [
+			{
+				internalType: 'contract INonfungiblePositionManager',
+				name: '_nonfungiblePositionManager',
+				type: 'address',
+			},
+			{
+				internalType: 'contract ISwapRouter',
+				name: '_swapRouter',
+				type: 'address',
+			},
+			{
+				internalType: 'address',
+				name: '_admin',
+				type: 'address',
+			},
+			{
+				internalType: 'address',
+				name: '_exec',
+				type: 'address',
+			},
+		],
+		stateMutability: 'nonpayable',
+		type: 'constructor',
+	},
+	{
+		anonymous: false,
+		inputs: [
+			{
+				indexed: false,
+				internalType: 'uint256',
+				name: 'tokenId',
+				type: 'uint256',
+			},
+			{
+				indexed: false,
+				internalType: 'uint256',
+				name: 'amount0',
+				type: 'uint256',
+			},
+			{
+				indexed: false,
+				internalType: 'uint256',
+				name: 'amount1',
+				type: 'uint256',
+			},
+		],
+		name: 'CollectedFees',
+		type: 'event',
+	},
+	{
+		anonymous: false,
+		inputs: [
+			{
+				indexed: false,
+				internalType: 'uint256',
+				name: 'tokenId',
+				type: 'uint256',
+			},
+			{
+				indexed: false,
+				internalType: 'uint256',
+				name: 'amount0',
+				type: 'uint256',
+			},
+			{
+				indexed: false,
+				internalType: 'uint256',
+				name: 'amount1',
+				type: 'uint256',
+			},
+			{
+				indexed: false,
+				internalType: 'uint256',
+				name: 'liquidity',
+				type: 'uint256',
+			},
+		],
+		name: 'LiquidityDecreased',
+		type: 'event',
+	},
+	{
+		anonymous: false,
+		inputs: [
+			{
+				indexed: false,
+				internalType: 'uint256',
+				name: 'tokenId',
+				type: 'uint256',
+			},
+			{
+				indexed: false,
+				internalType: 'uint256',
+				name: 'amount0',
+				type: 'uint256',
+			},
+			{
+				indexed: false,
+				internalType: 'uint256',
+				name: 'amount1',
+				type: 'uint256',
+			},
+			{
+				indexed: false,
+				internalType: 'uint256',
+				name: 'liquidity',
+				type: 'uint256',
+			},
+		],
+		name: 'LiquidityIncreased',
+		type: 'event',
+	},
+	{
+		anonymous: false,
+		inputs: [
+			{
+				indexed: false,
+				internalType: 'uint256',
+				name: 'tokenId',
+				type: 'uint256',
+			},
+			{
+				indexed: false,
+				internalType: 'address',
+				name: 'token0',
+				type: 'address',
+			},
+			{
+				indexed: false,
+				internalType: 'address',
+				name: 'token1',
+				type: 'address',
+			},
+			{
+				indexed: false,
+				internalType: 'uint24',
+				name: 'fee',
+				type: 'uint24',
+			},
+		],
+		name: 'NewDeposit',
+		type: 'event',
+	},
+	{
+		anonymous: false,
+		inputs: [
+			{
+				indexed: true,
+				internalType: 'bytes32',
+				name: 'role',
+				type: 'bytes32',
+			},
+			{
+				indexed: true,
+				internalType: 'bytes32',
+				name: 'previousAdminRole',
+				type: 'bytes32',
+			},
+			{
+				indexed: true,
+				internalType: 'bytes32',
+				name: 'newAdminRole',
+				type: 'bytes32',
+			},
+		],
+		name: 'RoleAdminChanged',
+		type: 'event',
+	},
+	{
+		anonymous: false,
+		inputs: [
+			{
+				indexed: true,
+				internalType: 'bytes32',
+				name: 'role',
+				type: 'bytes32',
+			},
+			{
+				indexed: true,
+				internalType: 'address',
+				name: 'account',
+				type: 'address',
+			},
+			{
+				indexed: true,
+				internalType: 'address',
+				name: 'sender',
+				type: 'address',
+			},
+		],
+		name: 'RoleGranted',
+		type: 'event',
+	},
+	{
+		anonymous: false,
+		inputs: [
+			{
+				indexed: true,
+				internalType: 'bytes32',
+				name: 'role',
+				type: 'bytes32',
+			},
+			{
+				indexed: true,
+				internalType: 'address',
+				name: 'account',
+				type: 'address',
+			},
+			{
+				indexed: true,
+				internalType: 'address',
+				name: 'sender',
+				type: 'address',
+			},
+		],
+		name: 'RoleRevoked',
+		type: 'event',
+	},
+	{
+		anonymous: false,
+		inputs: [
+			{
+				indexed: false,
+				internalType: 'address',
+				name: 'tokenIn',
+				type: 'address',
+			},
+			{
+				indexed: false,
+				internalType: 'address',
+				name: 'tokenOut',
+				type: 'address',
+			},
+			{
+				indexed: false,
+				internalType: 'uint256',
+				name: 'amountIn',
+				type: 'uint256',
+			},
+			{
+				indexed: false,
+				internalType: 'uint256',
+				name: 'amountOut',
+				type: 'uint256',
+			},
+		],
+		name: 'TokenSwap',
+		type: 'event',
+	},
+	{
+		inputs: [],
+		name: 'ADMIN_ROLE',
+		outputs: [
+			{
+				internalType: 'bytes32',
+				name: '',
+				type: 'bytes32',
+			},
+		],
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		inputs: [],
+		name: 'DEFAULT_ADMIN_ROLE',
+		outputs: [
+			{
+				internalType: 'bytes32',
+				name: '',
+				type: 'bytes32',
+			},
+		],
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		inputs: [],
+		name: 'EXECUTOR_ROLE',
+		outputs: [
+			{
+				internalType: 'bytes32',
+				name: '',
+				type: 'bytes32',
+			},
+		],
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'address',
+				name: 'token',
+				type: 'address',
+			},
+			{
+				internalType: 'address',
+				name: 'to',
+				type: 'address',
+			},
+			{
+				internalType: 'uint256',
+				name: 'amount',
+				type: 'uint256',
+			},
+		],
+		name: 'approve',
+		outputs: [],
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'address',
+				name: 'token0',
+				type: 'address',
+			},
+			{
+				internalType: 'address',
+				name: 'token1',
+				type: 'address',
+			},
+			{
+				internalType: 'uint256',
+				name: 'amount0',
+				type: 'uint256',
+			},
+			{
+				internalType: 'uint256',
+				name: 'amount1',
+				type: 'uint256',
+			},
+		],
+		name: 'approveManager',
+		outputs: [],
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'address',
+				name: 'token0',
+				type: 'address',
+			},
+			{
+				internalType: 'address',
+				name: 'token1',
+				type: 'address',
+			},
+			{
+				internalType: 'uint256',
+				name: 'amount0',
+				type: 'uint256',
+			},
+			{
+				internalType: 'uint256',
+				name: 'amount1',
+				type: 'uint256',
+			},
+		],
+		name: 'approveRouter',
+		outputs: [],
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'uint256',
+				name: 'tokenId',
+				type: 'uint256',
+			},
+			{
+				internalType: 'bool',
+				name: 'withdraw',
+				type: 'bool',
+			},
+		],
+		name: 'collectFees',
+		outputs: [
+			{
+				internalType: 'uint256',
+				name: 'amount0',
+				type: 'uint256',
+			},
+			{
+				internalType: 'uint256',
+				name: 'amount1',
+				type: 'uint256',
+			},
+		],
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'uint256',
+				name: 'tokenId',
+				type: 'uint256',
+			},
+			{
+				internalType: 'uint128',
+				name: 'liquidity',
+				type: 'uint128',
+			},
+			{
+				internalType: 'uint256',
+				name: 'amount0Min',
+				type: 'uint256',
+			},
+			{
+				internalType: 'uint256',
+				name: 'amount1Min',
+				type: 'uint256',
+			},
+		],
+		name: 'decreaseLiquidity',
+		outputs: [
+			{
+				internalType: 'uint256',
+				name: 'amount0',
+				type: 'uint256',
+			},
+			{
+				internalType: 'uint256',
+				name: 'amount1',
+				type: 'uint256',
+			},
+		],
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'uint256',
+				name: '',
+				type: 'uint256',
+			},
+		],
+		name: 'deposits',
+		outputs: [
+			{
+				internalType: 'address',
+				name: 'token0',
+				type: 'address',
+			},
+			{
+				internalType: 'address',
+				name: 'token1',
+				type: 'address',
+			},
+			{
+				internalType: 'uint24',
+				name: 'fee',
+				type: 'uint24',
+			},
+			{
+				internalType: 'int24',
+				name: 'tickLower',
+				type: 'int24',
+			},
+			{
+				internalType: 'int24',
+				name: 'tickUpper',
+				type: 'int24',
+			},
+		],
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'bytes32',
+				name: 'role',
+				type: 'bytes32',
+			},
+		],
+		name: 'getRoleAdmin',
+		outputs: [
+			{
+				internalType: 'bytes32',
+				name: '',
+				type: 'bytes32',
+			},
+		],
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'bytes32',
+				name: 'role',
+				type: 'bytes32',
+			},
+			{
+				internalType: 'uint256',
+				name: 'index',
+				type: 'uint256',
+			},
+		],
+		name: 'getRoleMember',
+		outputs: [
+			{
+				internalType: 'address',
+				name: '',
+				type: 'address',
+			},
+		],
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'bytes32',
+				name: 'role',
+				type: 'bytes32',
+			},
+		],
+		name: 'getRoleMemberCount',
+		outputs: [
+			{
+				internalType: 'uint256',
+				name: '',
+				type: 'uint256',
+			},
+		],
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'bytes32',
+				name: 'role',
+				type: 'bytes32',
+			},
+			{
+				internalType: 'address',
+				name: 'account',
+				type: 'address',
+			},
+		],
+		name: 'grantRole',
+		outputs: [],
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'bytes32',
+				name: 'role',
+				type: 'bytes32',
+			},
+			{
+				internalType: 'address',
+				name: 'account',
+				type: 'address',
+			},
+		],
+		name: 'hasRole',
+		outputs: [
+			{
+				internalType: 'bool',
+				name: '',
+				type: 'bool',
+			},
+		],
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'uint256',
+				name: 'tokenId',
+				type: 'uint256',
+			},
+			{
+				internalType: 'uint256',
+				name: 'amount0Desired',
+				type: 'uint256',
+			},
+			{
+				internalType: 'uint256',
+				name: 'amount1Desired',
+				type: 'uint256',
+			},
+			{
+				internalType: 'uint256',
+				name: 'amount0Min',
+				type: 'uint256',
+			},
+			{
+				internalType: 'uint256',
+				name: 'amount1Min',
+				type: 'uint256',
+			},
+		],
+		name: 'increaseLiquidity',
+		outputs: [
+			{
+				internalType: 'uint128',
+				name: 'liquidity',
+				type: 'uint128',
+			},
+			{
+				internalType: 'uint256',
+				name: 'amount0',
+				type: 'uint256',
+			},
+			{
+				internalType: 'uint256',
+				name: 'amount1',
+				type: 'uint256',
+			},
+		],
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'address',
+				name: 'token0',
+				type: 'address',
+			},
+			{
+				internalType: 'address',
+				name: 'token1',
+				type: 'address',
+			},
+			{
+				internalType: 'uint24',
+				name: 'fee',
+				type: 'uint24',
+			},
+			{
+				internalType: 'int24',
+				name: 'tickLower',
+				type: 'int24',
+			},
+			{
+				internalType: 'int24',
+				name: 'tickUpper',
+				type: 'int24',
+			},
+			{
+				internalType: 'uint256',
+				name: 'amount0ToMint',
+				type: 'uint256',
+			},
+			{
+				internalType: 'uint256',
+				name: 'amount1ToMint',
+				type: 'uint256',
+			},
+			{
+				internalType: 'uint256',
+				name: 'amount0Min',
+				type: 'uint256',
+			},
+			{
+				internalType: 'uint256',
+				name: 'amount1Min',
+				type: 'uint256',
+			},
+		],
+		name: 'mintNewPosition',
+		outputs: [
+			{
+				internalType: 'uint256',
+				name: 'tokenId',
+				type: 'uint256',
+			},
+			{
+				internalType: 'uint128',
+				name: 'liquidity',
+				type: 'uint128',
+			},
+			{
+				internalType: 'uint256',
+				name: 'amount0',
+				type: 'uint256',
+			},
+			{
+				internalType: 'uint256',
+				name: 'amount1',
+				type: 'uint256',
+			},
+		],
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+	{
+		inputs: [],
+		name: 'nonfungiblePositionManager',
+		outputs: [
+			{
+				internalType: 'contract INonfungiblePositionManager',
+				name: '',
+				type: 'address',
+			},
+		],
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'address',
+				name: '',
+				type: 'address',
+			},
+			{
+				internalType: 'address',
+				name: '',
+				type: 'address',
+			},
+			{
+				internalType: 'uint256',
+				name: 'tokenId',
+				type: 'uint256',
+			},
+			{
+				internalType: 'bytes',
+				name: '',
+				type: 'bytes',
+			},
+		],
+		name: 'onERC721Received',
+		outputs: [
+			{
+				internalType: 'bytes4',
+				name: '',
+				type: 'bytes4',
+			},
+		],
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'uint256',
+				name: 'tokenId',
+				type: 'uint256',
+			},
+			{
+				internalType: 'address',
+				name: 'to',
+				type: 'address',
+			},
+		],
+		name: 'redeemNFT',
+		outputs: [],
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'address',
+				name: 'toTransfer',
+				type: 'address',
+			},
+			{
+				internalType: 'address',
+				name: 'to',
+				type: 'address',
+			},
+		],
+		name: 'redeemOwnership',
+		outputs: [],
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'address',
+				name: 'token',
+				type: 'address',
+			},
+			{
+				internalType: 'address',
+				name: 'to',
+				type: 'address',
+			},
+			{
+				internalType: 'uint256',
+				name: 'value',
+				type: 'uint256',
+			},
+		],
+		name: 'redeemToken',
+		outputs: [],
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'bytes32',
+				name: 'role',
+				type: 'bytes32',
+			},
+			{
+				internalType: 'address',
+				name: 'account',
+				type: 'address',
+			},
+		],
+		name: 'renounceRole',
+		outputs: [],
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'bytes32',
+				name: 'role',
+				type: 'bytes32',
+			},
+			{
+				internalType: 'address',
+				name: 'account',
+				type: 'address',
+			},
+		],
+		name: 'revokeRole',
+		outputs: [],
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'address',
+				name: 'tkn0',
+				type: 'address',
+			},
+			{
+				internalType: 'address',
+				name: 'tkn1',
+				type: 'address',
+			},
+			{
+				internalType: 'uint24',
+				name: 'fee',
+				type: 'uint24',
+			},
+			{
+				internalType: 'uint256',
+				name: 'amountIn',
+				type: 'uint256',
+			},
+			{
+				internalType: 'uint256',
+				name: 'amountOutMinimum',
+				type: 'uint256',
+			},
+			{
+				internalType: 'uint160',
+				name: 'sqrtPriceLimitX96',
+				type: 'uint160',
+			},
+		],
+		name: 'swapExactInputSingle',
+		outputs: [
+			{
+				internalType: 'uint256',
+				name: 'amountOut',
+				type: 'uint256',
+			},
+		],
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'address',
+				name: 'tkn0',
+				type: 'address',
+			},
+			{
+				internalType: 'address',
+				name: 'tkn1',
+				type: 'address',
+			},
+			{
+				internalType: 'uint24',
+				name: 'fee',
+				type: 'uint24',
+			},
+			{
+				internalType: 'uint256',
+				name: 'amountOut',
+				type: 'uint256',
+			},
+			{
+				internalType: 'uint256',
+				name: 'amountInMaximum',
+				type: 'uint256',
+			},
+			{
+				internalType: 'uint160',
+				name: 'sqrtPriceLimitX96',
+				type: 'uint160',
+			},
+		],
+		name: 'swapExactOutputSingle',
+		outputs: [
+			{
+				internalType: 'uint256',
+				name: 'amountIn',
+				type: 'uint256',
+			},
+		],
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+	{
+		inputs: [],
+		name: 'swapRouter',
+		outputs: [
+			{
+				internalType: 'contract ISwapRouter',
+				name: '',
+				type: 'address',
+			},
+		],
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'uint256',
+				name: 'tokenId',
+				type: 'uint256',
+			},
+			{
+				internalType: 'uint256',
+				name: 'amount0',
+				type: 'uint256',
+			},
+			{
+				internalType: 'uint256',
+				name: 'amount1',
+				type: 'uint256',
+			},
+		],
+		name: 'transferForDeposit',
+		outputs: [],
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'address',
+				name: 'token0',
+				type: 'address',
+			},
+			{
+				internalType: 'address',
+				name: 'token1',
+				type: 'address',
+			},
+			{
+				internalType: 'uint256',
+				name: 'amount0',
+				type: 'uint256',
+			},
+			{
+				internalType: 'uint256',
+				name: 'amount1',
+				type: 'uint256',
+			},
+		],
+		name: 'transferForTokens',
+		outputs: [],
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+] as const;

@@ -30,7 +30,7 @@ console.log('Constructor Args');
 console.log(args);
 
 const LiquidityControllerModule = buildModule('LiquidityControllerModule', (m) => {
-	const controller = m.contract('LiquidityController', [manager, router, w1.address, w2.address]);
+	const controller = m.contract('LiquidityController', args);
 	return { controller };
 });
 

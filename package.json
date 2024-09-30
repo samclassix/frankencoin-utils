@@ -54,7 +54,7 @@
 		"@uniswap/v3-core": "^1.0.1",
 		"@uniswap/v3-periphery": "^1.4.4",
 		"hardhat": "^2.22.10",
-		"hardhat-abi-exporter": "^2.10.0",
+		"hardhat-abi-exporter": "^2.10.1",
 		"hardhat-contract-sizer": "^2.5.1",
 		"prompt": "^1.3.0",
 		"ts-node": "^10.9.1",

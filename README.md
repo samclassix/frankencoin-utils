@@ -15,9 +15,15 @@ yarn run ...
 "publish": "npm publish --access public"
 ```
 
-### Deploy
+### Deploy & Verify
 
-`npx hardhat ignition deploy ./ignition/modules/LiquidityController.ts --network polygon `
+```bash
+npx hardhat ignition deploy ./ignition/modules/LiquidityController.ts --network polygon --deployment-id dep1
+npx hardhat verify --network polygon --constructor-args ./ignition/constructor/dep1.js 0x10A0DDB46361b3F1d6405eFffc1Db96771bAb85F
+```
+
+> Check out ./ignition/deployments/[deployment]/deployed_addresses.json
+> Check out ./ignition/deployments/[deployment]/journal.jsonl
 
 # Version - PoC
 

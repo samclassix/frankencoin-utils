@@ -15,17 +15,9 @@ yarn run ...
 "publish": "npm publish --access public"
 ```
 
-# NPM publish
+### Deploy
 
-This will help with typescript, abi and deployment addresses support.
-
-```bash
-npm publish --access public
-```
-
-### Export abi.ts
-
-...
+`npx hardhat ignition deploy ./ignition/modules/LiquidityController.ts --network polygon `
 
 # Version - PoC
 

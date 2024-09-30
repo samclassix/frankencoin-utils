@@ -1,7 +1,0 @@
-[
-    "function WETH9() view returns (address)",
-    "function factory() view returns (address)",
-    "function refundETH() payable",
-    "function sweepToken(address,uint256,address) payable",
-    "function unwrapWETH9(uint256,address) payable"
-]

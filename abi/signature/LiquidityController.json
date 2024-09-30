@@ -1,5 +1,5 @@
 [
-    "constructor(address,address,address)",
+    "constructor(address,address,address,address)",
     "event CollectedFees(uint256,uint256,uint256)",
     "event LiquidityDecreased(uint256,uint256,uint256,uint256)",
     "event LiquidityIncreased(uint256,uint256,uint256,uint256)",
@@ -7,9 +7,13 @@
     "event RoleAdminChanged(bytes32 indexed,bytes32 indexed,bytes32 indexed)",
     "event RoleGranted(bytes32 indexed,address indexed,address indexed)",
     "event RoleRevoked(bytes32 indexed,address indexed,address indexed)",
+    "event TokenSwap(address,address,uint256,uint256)",
     "function ADMIN_ROLE() view returns (bytes32)",
     "function DEFAULT_ADMIN_ROLE() view returns (bytes32)",
     "function EXECUTOR_ROLE() view returns (bytes32)",
+    "function approve(address,address,uint256)",
+    "function approveManager(address,address,uint256,uint256)",
+    "function approveRouter(address,address,uint256,uint256)",
     "function collectFees(uint256,bool) returns (uint256, uint256)",
     "function decreaseLiquidity(uint256,uint128,uint256,uint256) returns (uint256, uint256)",
     "function deposits(uint256) view returns (address, address, uint24, int24, int24)",
@@ -27,8 +31,9 @@
     "function redeemToken(address,address,uint256)",
     "function renounceRole(bytes32,address)",
     "function revokeRole(bytes32,address)",
-    "function setAllowanceForManager(address,address,uint256,uint256)",
-    "function setAllowanceTo(address,address,uint256)",
+    "function swapExactInputSingle(address,address,uint24,uint256,uint256,uint160) returns (uint256)",
+    "function swapExactOutputSingle(address,address,uint24,uint256,uint256,uint160) returns (uint256)",
+    "function swapRouter() view returns (address)",
     "function transferForDeposit(uint256,uint256,uint256)",
     "function transferForTokens(address,address,uint256,uint256)"
 ]

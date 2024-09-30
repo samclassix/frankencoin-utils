@@ -10,6 +10,6 @@ export interface ChainAddress {
 
 export const ADDRESS: Record<number, ChainAddress> = {
 	[polygon.id]: {
-		membership: '...',
+		membership: zeroAddress,
 	},
 };

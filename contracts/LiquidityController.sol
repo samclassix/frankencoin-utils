@@ -7,14 +7,16 @@ import '@openzeppelin/contracts/access/AccessControl.sol';
 import '@openzeppelin/contracts/access/Ownable.sol';
 import '@uniswap/v3-periphery/contracts/interfaces/INonfungiblePositionManager.sol';
 import '@uniswap/v3-periphery/contracts/libraries/TransferHelper.sol';
+import '@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol';
 
 contract LiquidityController is IERC721Receiver, AccessControl {
 	bytes32 public constant ADMIN_ROLE = keccak256('ADMIN_ROLE');
 	bytes32 public constant EXECUTOR_ROLE = keccak256('EXECUTOR_ROLE');
 
 	INonfungiblePositionManager public immutable nonfungiblePositionManager;
+	ISwapRouter public immutable swapRouter;
 
-	// Represents the deposit of an NFT
+	// Represents the "Liquidity Position" (ERC721, NFT, Deposit, ...) at Uniswap
 	struct Deposit {
 		address token0;
 		address token1;
@@ -31,6 +33,7 @@ contract LiquidityController is IERC721Receiver, AccessControl {
 	event CollectedFees(uint256 tokenId, uint256 amount0, uint256 amount1);
 	event LiquidityIncreased(uint256 tokenId, uint256 amount0, uint256 amount1, uint256 liquidity);
 	event LiquidityDecreased(uint256 tokenId, uint256 amount0, uint256 amount1, uint256 liquidity);
+	event TokenSwap(address tokenIn, address tokenOut, uint256 amountIn, uint256 amountOut);
 
 	// ---------------------------------------------------------------------------------------
 	modifier onlyAdmins() {
@@ -46,8 +49,14 @@ contract LiquidityController is IERC721Receiver, AccessControl {
 	}
 
 	// ---------------------------------------------------------------------------------------
-	constructor(INonfungiblePositionManager _nonfungiblePositionManager, address _admin, address _exec) {
+	constructor(
+		INonfungiblePositionManager _nonfungiblePositionManager,
+		ISwapRouter _swapRouter,
+		address _admin,
+		address _exec
+	) {
 		nonfungiblePositionManager = _nonfungiblePositionManager;
+		swapRouter = _swapRouter;
 
 		_setRoleAdmin(ADMIN_ROLE, ADMIN_ROLE);
 		_setRoleAdmin(EXECUTOR_ROLE, ADMIN_ROLE);
@@ -116,19 +125,19 @@ contract LiquidityController is IERC721Receiver, AccessControl {
 	}
 
 	// ---------------------------------------------------------------------------------------
-	// set the allowance for any two tokens to the manager
-	function setAllowanceForManager(
-		address token0,
-		address token1,
-		uint256 amount0,
-		uint256 amount1
-	) external onlyAdmins {
+	// approve for any two tokens to the manager
+	function approveManager(address token0, address token1, uint256 amount0, uint256 amount1) external onlyAdmins {
 		TransferHelper.safeApprove(token0, address(nonfungiblePositionManager), amount0);
 		TransferHelper.safeApprove(token1, address(nonfungiblePositionManager), amount1);
 	}
 
-	// native proxy for approve/set allowance to
-	function setAllowanceTo(address token, address to, uint256 amount) external onlyAdmins {
+	function approveRouter(address token0, address token1, uint256 amount0, uint256 amount1) external onlyAdmins {
+		TransferHelper.safeApprove(token0, address(swapRouter), amount0);
+		TransferHelper.safeApprove(token1, address(swapRouter), amount1);
+	}
+
+	// approve, native proxy
+	function approve(address token, address to, uint256 amount) external onlyAdmins {
 		TransferHelper.safeApprove(token, to, amount);
 	}
 
@@ -161,8 +170,8 @@ contract LiquidityController is IERC721Receiver, AccessControl {
 			deadline: block.timestamp
 		});
 
-		// The pool defined by tkn0/tkn1 and fee tier 0.3% must already be created and initialized in order to mint
-		// @dev: needs allowance, see "setAllowanceForManager"
+		// @dev: needs allowance, see "approveManager"
+		// @dev: pool needs to exist already, incl fee diff.
 		(tokenId, liquidity, amount0, amount1) = nonfungiblePositionManager.mint(params);
 
 		// Create a deposit
@@ -182,7 +191,7 @@ contract LiquidityController is IERC721Receiver, AccessControl {
 		// set amount0Max and amount1Max to uint256.max to collect all fees
 		INonfungiblePositionManager.CollectParams memory params = INonfungiblePositionManager.CollectParams({
 			tokenId: tokenId,
-			recipient: withdraw ? msg.sender : address(this), // give admin the write to withdraw, otherwise this
+			recipient: withdraw ? msg.sender : address(this), // give admin the write to withdraw, otherwise to SC
 			amount0Max: type(uint128).max,
 			amount1Max: type(uint128).max
 		});
@@ -194,22 +203,22 @@ contract LiquidityController is IERC721Receiver, AccessControl {
 	// ---------------------------------------------------------------------------------------
 	function increaseLiquidity(
 		uint256 tokenId,
-		uint256 amountAdd0,
-		uint256 amountAdd1,
+		uint256 amount0Desired,
+		uint256 amount1Desired,
 		uint256 amount0Min,
 		uint256 amount1Min
 	) external onlyAdminsOrExecutors returns (uint128 liquidity, uint256 amount0, uint256 amount1) {
 		INonfungiblePositionManager.IncreaseLiquidityParams memory params = INonfungiblePositionManager
 			.IncreaseLiquidityParams({
 				tokenId: tokenId,
-				amount0Desired: amountAdd0,
-				amount1Desired: amountAdd1,
+				amount0Desired: amount0Desired,
+				amount1Desired: amount1Desired,
 				amount0Min: amount0Min,
 				amount1Min: amount1Min,
 				deadline: block.timestamp
 			});
 
-		// @dev: needs allowance, see "setAllowanceForManager"
+		// @dev: needs allowance, see "approveManager"
 		(liquidity, amount0, amount1) = nonfungiblePositionManager.increaseLiquidity(params);
 		emit LiquidityIncreased(tokenId, amount0, amount1, liquidity);
 	}
@@ -221,8 +230,8 @@ contract LiquidityController is IERC721Receiver, AccessControl {
 		uint256 amount0Min,
 		uint256 amount1Min
 	) external onlyAdminsOrExecutors returns (uint256 amount0, uint256 amount1) {
-		// amount0Min and amount1Min are price slippage checks
-		// if the amount received after burning is not greater than these minimums, transaction will fail
+		// @dev: amount0Min and amount1Min are price slippage checks
+		// @dev: if the amount received after burning is not greater than these minimums, transaction will fail
 		INonfungiblePositionManager.DecreaseLiquidityParams memory params = INonfungiblePositionManager
 			.DecreaseLiquidityParams({
 				tokenId: tokenId,
@@ -234,5 +243,55 @@ contract LiquidityController is IERC721Receiver, AccessControl {
 
 		(amount0, amount1) = nonfungiblePositionManager.decreaseLiquidity(params);
 		emit LiquidityDecreased(tokenId, amount0, amount1, liquidity);
+	}
+
+	// ---------------------------------------------------------------------------------------
+	function swapExactInputSingle(
+		address tkn0,
+		address tkn1,
+		uint24 fee,
+		uint256 amountIn,
+		uint256 amountOutMinimum,
+		uint160 sqrtPriceLimitX96
+	) external onlyAdminsOrExecutors returns (uint256 amountOut) {
+		ISwapRouter.ExactInputSingleParams memory params = ISwapRouter.ExactInputSingleParams({
+			tokenIn: tkn0,
+			tokenOut: tkn1,
+			fee: fee,
+			recipient: address(this),
+			deadline: block.timestamp,
+			amountIn: amountIn,
+			amountOutMinimum: amountOutMinimum,
+			sqrtPriceLimitX96: sqrtPriceLimitX96
+		});
+
+		// @dev: needs allowance, see "approveRouter"
+		amountOut = swapRouter.exactInputSingle(params);
+		emit TokenSwap(tkn0, tkn1, amountIn, amountOut);
+	}
+
+	// ---------------------------------------------------------------------------------------
+	function swapExactOutputSingle(
+		address tkn0,
+		address tkn1,
+		uint24 fee,
+		uint256 amountOut,
+		uint256 amountInMaximum,
+		uint160 sqrtPriceLimitX96
+	) external onlyAdminsOrExecutors returns (uint256 amountIn) {
+		ISwapRouter.ExactOutputSingleParams memory params = ISwapRouter.ExactOutputSingleParams({
+			tokenIn: tkn0,
+			tokenOut: tkn1,
+			fee: fee,
+			recipient: address(this),
+			deadline: block.timestamp,
+			amountOut: amountOut,
+			amountInMaximum: amountInMaximum,
+			sqrtPriceLimitX96: sqrtPriceLimitX96
+		});
+
+		// @dev: needs allowance, see "approveRouter"
+		amountIn = swapRouter.exactOutputSingle(params);
+		emit TokenSwap(tkn0, tkn1, amountIn, amountOut);
 	}
 }

@@ -1,4 +1,0 @@
-[
-    "function observe(uint32[]) view returns (int56[], uint160[])",
-    "function snapshotCumulativesInside(int24,int24) view returns (int56, uint160, uint32)"
-]

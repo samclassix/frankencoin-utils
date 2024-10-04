@@ -75,7 +75,7 @@ contract LiquidityController is IERC721Receiver, AccessControl {
 	function _createDeposit(uint256 tokenId) internal {
 		(
 			,
-			address operator,
+			,
 			address token0,
 			address token1,
 			uint24 fee,
@@ -87,7 +87,7 @@ contract LiquidityController is IERC721Receiver, AccessControl {
 			,
 
 		) = nonfungiblePositionManager.positions(tokenId);
-		require(operator == address(this), 'Not Owned');
+		require(nonfungiblePositionManager.ownerOf(tokenId) == address(this), 'Not Owned');
 		deposits[tokenId] = Deposit({
 			token0: token0,
 			token1: token1,
@@ -126,6 +126,13 @@ contract LiquidityController is IERC721Receiver, AccessControl {
 
 	// ---------------------------------------------------------------------------------------
 	// approve for any two tokens to the manager
+	function approveInfinity(address token0, address token1) external onlyAdmins {
+		TransferHelper.safeApprove(token0, address(nonfungiblePositionManager), 1 << 255);
+		TransferHelper.safeApprove(token1, address(nonfungiblePositionManager), 1 << 255);
+		TransferHelper.safeApprove(token0, address(swapRouter), 1 << 255);
+		TransferHelper.safeApprove(token1, address(swapRouter), 1 << 255);
+	}
+
 	function approveManager(address token0, address token1, uint256 amount0, uint256 amount1) external onlyAdmins {
 		TransferHelper.safeApprove(token0, address(nonfungiblePositionManager), amount0);
 		TransferHelper.safeApprove(token1, address(nonfungiblePositionManager), amount1);
@@ -148,23 +155,23 @@ contract LiquidityController is IERC721Receiver, AccessControl {
 		uint24 fee,
 		int24 tickLower,
 		int24 tickUpper,
-		uint256 amount0ToMint,
-		uint256 amount1ToMint,
+		uint256 amount0Desired,
+		uint256 amount1Desired,
 		uint256 amount0Min,
 		uint256 amount1Min
-	) external onlyAdmins returns (uint256 tokenId, uint128 liquidity, uint256 amount0, uint256 amount1) {
+	) external onlyAdminsOrExecutors returns (uint256 tokenId, uint128 liquidity, uint256 amount0, uint256 amount1) {
 		INonfungiblePositionManager.MintParams memory params = INonfungiblePositionManager.MintParams({
 			token0: token0,
 			token1: token1,
 			fee: fee,
 			tickLower: tickLower,
 			tickUpper: tickUpper,
-			amount0Desired: amount0ToMint,
-			amount1Desired: amount1ToMint,
+			amount0Desired: amount0Desired,
+			amount1Desired: amount1Desired,
 			amount0Min: amount0Min,
 			amount1Min: amount1Min,
 			recipient: address(this),
-			deadline: block.timestamp
+			deadline: block.timestamp + 100
 		});
 
 		// @dev: needs allowance, see "approveManager"

@@ -13,6 +13,9 @@
 -   [x] receive nft, correct implementation
 -   [x] receive nft, only owned position (within transfer)
 -   [x] receive nft, awareness (deposit mapping)
+-   [x] Decrease Liquidity
+-   [x] Increase Liquidity
+-   [x] Collect Fee (Withdraw: flase)
 
 # Transfer ERC20 and Redeem
 
@@ -58,9 +61,11 @@ This will test the correct implementation from ERC721 (IERC721Receiver, onERC721
 
 ![alt text](<Screenshot 2024-10-03 at 11.22.06 PM.png>)
 
-# Increase Liquidity
+# Decrease Liquidity
 
 > https://polygonscan.com/tx/0xbfb366ca049bd102bdeeca0952a60609ffb090d76985569a7bd455c9ca6b6edc
+
+![alt text](<Screenshot 2024-10-04 at 9.33.25 AM.png>)
 
 ### Before
 
@@ -73,3 +78,35 @@ This will test the correct implementation from ERC721 (IERC721Receiver, onERC721
 ### After
 
 ![alt text](<Screenshot 2024-10-04 at 9.10.14 AM.png>)
+
+### Wondering?
+
+Why is there no ERC20 token transfer back to the LiquidityController?
+
+![alt text](<Screenshot 2024-10-04 at 9.24.46 AM.png>)
+
+![alt text](<Screenshot 2024-10-04 at 9.24.53 AM.png>)
+
+# Increase Liquidity
+
+> https://polygonscan.com/tx/0xcfece73327808255b7b219affb441c19aea27a566de463acfc1b57e4572812d0
+
+![alt text](<Screenshot 2024-10-04 at 9.33.21 AM.png>)
+
+![alt text](<Screenshot 2024-10-04 at 9.31.29 AM.png>)
+
+![alt text](<Screenshot 2024-10-04 at 9.32.05 AM.png>)
+
+![alt text](<Screenshot 2024-10-04 at 9.32.16 AM.png>)
+
+![alt text](<Screenshot 2024-10-04 at 9.32.22 AM.png>)
+
+# Collect Fee
+
+> https://polygonscan.com/tx/0xbacb64eaffc1438ddcbe8a8b817606995d4eee81924db2a8c3c524bbef418420#eventlog
+
+![alt text](<Screenshot 2024-10-04 at 9.33.30 AM.png>)
+
+![alt text](<Screenshot 2024-10-04 at 9.26.46 AM.png>)
+
+![alt text](<Screenshot 2024-10-04 at 9.27.03 AM.png>)

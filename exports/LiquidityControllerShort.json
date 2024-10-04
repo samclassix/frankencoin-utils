@@ -3,29 +3,6 @@
 		"inputs": [
 			{
 				"internalType": "address",
-				"name": "token",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "to",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
-			}
-		],
-		"name": "approve",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
 				"name": "token0",
 				"type": "address"
 			},
@@ -33,47 +10,9 @@
 				"internalType": "address",
 				"name": "token1",
 				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "amount0",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "amount1",
-				"type": "uint256"
 			}
 		],
-		"name": "approveManager",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "token0",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "token1",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "amount0",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "amount1",
-				"type": "uint256"
-			}
-		],
-		"name": "approveRouter",
+		"name": "approveInfinity",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -263,12 +202,12 @@
 			},
 			{
 				"internalType": "uint256",
-				"name": "amount0ToMint",
+				"name": "amount0Desired",
 				"type": "uint256"
 			},
 			{
 				"internalType": "uint256",
-				"name": "amount1ToMint",
+				"name": "amount1Desired",
 				"type": "uint256"
 			},
 			{
@@ -306,6 +245,19 @@
 			}
 		],
 		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "nonfungiblePositionManager",
+		"outputs": [
+			{
+				"internalType": "contract INonfungiblePositionManager",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
 		"type": "function"
 	},
 	{
@@ -397,54 +349,16 @@
 		"type": "function"
 	},
 	{
-		"inputs": [
+		"inputs": [],
+		"name": "swapRouter",
+		"outputs": [
 			{
-				"internalType": "uint256",
-				"name": "tokenId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "amount0",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "amount1",
-				"type": "uint256"
+				"internalType": "contract ISwapRouter",
+				"name": "",
+				"type": "address"
 			}
 		],
-		"name": "transferForDeposit",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "token0",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "token1",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "amount0",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "amount1",
-				"type": "uint256"
-			}
-		],
-		"name": "transferForTokens",
-		"outputs": [],
-		"stateMutability": "nonpayable",
+		"stateMutability": "view",
 		"type": "function"
 	}
 ]

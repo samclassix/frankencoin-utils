@@ -47,6 +47,8 @@
 
 https://polygonscan.com/tx/0x76d5bab286491193bb472fdf74783277526c00dc443d7d3b015ecdd939c95789
 
+![alt text](<Screenshot 2024-10-04 at 12.19.54 PM.png>)
+
 ![alt text](<Screenshot 2024-10-03 at 11.17.58 PM.png>)
 
 # Receive NFT from EOA via SafeTransfer

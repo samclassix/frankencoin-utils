@@ -13,13 +13,22 @@ Interface (solidity): `contracts/interfaces/ILiquidityController.sol`
 Interface (typescript): `exports/LiquidityController.ts`
 ```
 
-# Deployed on Polygon for testing
+# Deployed Versions on Polygon for testing
 
 https://polygonscan.com/address/0x10a0ddb46361b3f1d6405efffc1db96771bab85f
 
 ```
 Smart Contract Address
+
+Dep1
 0x10a0ddb46361b3f1d6405efffc1db96771bab85f
+
+Dep2
+0xafc9c7A3fabe414D1bf558C8c3921A53ac0c52ca
+
+Dep3
+0xaACb94eC5eE4e6742aC4472Fd275569378F0A2B4
+
 ```
 
 ### Constructor Args

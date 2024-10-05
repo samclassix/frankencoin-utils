@@ -88,6 +88,4 @@ npx hardhat verify --network polygon --constructor-args ./ignition/constructor-a
 
 # Version - Proof of Concept
 
-> Check out `docs/Poc Development/Poc Development.md`
-
-> Check out Tests on Polygon `docs/Poc Development/PoC Development.md`
+> Check out `/docs` for more infos about "Proof of Concept" and "Testing" the development on Polygon.
